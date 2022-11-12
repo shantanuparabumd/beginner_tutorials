@@ -49,6 +49,8 @@ rosidl_target_interfaces(server
 ${PROJECT_NAME} "rosidl_typesupport_cpp")
 rosidl_target_interfaces(client 
 ${PROJECT_NAME} "rosidl_typesupport_cpp")
+rosidl_target_interfaces(talker 
+${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 ament_export_dependencies(rosidl_default_runtime)
 ament_package()
