@@ -1,29 +1,37 @@
-#include "rclcpp/rclcpp.hpp"
+/**
+ * @file modify_string_server.cpp
+ * @author Shantanu Parab (sparab@umd.edu)
+ * @brief Node to serve the response for a request
+ * @version 0.1
+ * @date 2022-11-14
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ */
 #include "beginner_tutorials/srv/modify_string.hpp"
+#include "rclcpp/rclcpp.hpp"
+
 #include <cstdlib>
 #include <iterator>
 #include <string>
 #include <vector>
 #include <memory>
+using ModString = beginner_tutorials::srv::ModifyString;
 
-void add(const std::shared_ptr<beginner_tutorials::srv::ModifyString::Request> request,
-          std::shared_ptr<beginner_tutorials::srv::ModifyString::Response>      response)
-{
-  std::vector<std::string> words{"Cat","Dog","Rat","Bat","Bird","Duck","Fox","Cow","Pig","Hen"};
+void add(const std::shared_ptr<ModString::Request> request,
+          std::shared_ptr<ModString::Response> response) {
+  std::vector<std::string> words{"Cat", "Dog", "Rat", "Bat", "Bird",
+                "Duck", "Fox", "Cow", "Pig", "Hen"};
   response->c = request->a +" "+ request->b+" "+words[rand()%10];
-
-  // RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Incoming request\na: %ld" " b: %ld",
-  //               request->a, request->b);
-  // RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "sending back response: [%ld]", (long int)response->sum);
 }
 
-int main(int argc, char **argv)
-{
+int main(int argc, char **argv) {
   rclcpp::init(argc, argv);
-  std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("modify_string_server");
+  std::shared_ptr<rclcpp::Node> node =
+        rclcpp::Node::make_shared("modify_string_server");
 
-  rclcpp::Service<beginner_tutorials::srv::ModifyString>::SharedPtr service =
-  node->create_service<beginner_tutorials::srv::ModifyString>("modify_string", &add);
+  rclcpp::Service<ModString>::SharedPtr service =
+  node->create_service<ModString>("modify_string", &add);
 
   RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Ready to modify string.");
 

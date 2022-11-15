@@ -30,24 +30,19 @@ ament_target_dependencies(talker rclcpp std_msgs)
 add_executable(listener src/subscriber_member_function.cpp)
 ament_target_dependencies(listener rclcpp std_msgs)
 
-
 add_executable(server src/modify_string_server.cpp)
 ament_target_dependencies(server rclcpp std_msgs)
 
-add_executable(client src/modify_string_client.cpp)
-ament_target_dependencies(client rclcpp std_msgs)
+
 
 
 install(TARGETS
   talker
   listener
   server
-  client
   DESTINATION lib/${PROJECT_NAME})
 
 rosidl_target_interfaces(server 
-${PROJECT_NAME} "rosidl_typesupport_cpp")
-rosidl_target_interfaces(client 
 ${PROJECT_NAME} "rosidl_typesupport_cpp")
 rosidl_target_interfaces(talker 
 ${PROJECT_NAME} "rosidl_typesupport_cpp")

@@ -16,55 +16,62 @@
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
 #include "beginner_tutorials/srv/modify_string.hpp"
-using std::placeholders::_1;
 
+using std::placeholders::_1;
 using namespace std::chrono_literals;
+
+using sharedFuture =
+  rclcpp::Client<beginner_tutorials::srv::ModifyString>::SharedFuture;
 
 /* This example creates a subclass of Node and uses std::bind() to register a
  * member function as a callback from the timer. */
 
 class MinimalPublisher : public rclcpp::Node {
  public:
-  MinimalPublisher()  //Object for node is created using a constructor
+  MinimalPublisher()  // Object for node is created using a constructor
   : Node("minimal_publisher"), count_(0) {
-
     // Declaring parameter
     auto param_desc = rcl_interfaces::msg::ParameterDescriptor();
     param_desc.description = "Set callback frequency.";
-    this->declare_parameter("freq", 2.0, param_desc); 
-    
+    this->declare_parameter("freq", 2.0, param_desc);
     // Fetching value from the parameter server
-    auto param = this->get_parameter("freq");    
-    auto freq = param.get_parameter_value().get<std::float_t>(); 
+    auto param = this->get_parameter("freq");
+    auto freq = param.get_parameter_value().get<std::float_t>();
 
-    // //Creating a subscriber for Parameter and setting up call back to change frequency
+    // Creating a subscriber for Parameter
+    // and setting up call back to change frequency
     m_param_subscriber_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
-    auto paramCallbackPtr = std::bind (&MinimalPublisher::param_callback, this, _1);
-    m_paramHandle_ = m_param_subscriber_->add_parameter_callback ("freq", paramCallbackPtr);
+    auto paramCallbackPtr =
+            std::bind(&MinimalPublisher::param_callback, this, _1);
+    m_paramHandle_ =
+          m_param_subscriber_->add_parameter_callback("freq", paramCallbackPtr);
 
 
-  //Creating a Publisher
+  // Creating a Publisher
     publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
-    auto period = std::chrono::milliseconds (static_cast<int> ((1000 / freq)));
+    auto period = std::chrono::milliseconds(static_cast<int>((1000 / freq)));
     timer_ = this->create_wall_timer(
     period, std::bind(&MinimalPublisher::timer_callback, this));
 
 
 
-  //Creating a Client
-    client = this->create_client<beginner_tutorials::srv::ModifyString>("modify_string");
+  // Creating a Client
+    client =
+    this->create_client<beginner_tutorials::srv::ModifyString>("modify_string");
     while (!client->wait_for_service(1s)) {
         if (!rclcpp::ok()) {
-          RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service. Exiting.");
-          exit (EXIT_FAILURE);
+          RCLCPP_ERROR(rclcpp::get_logger("rclcpp"),
+                    "Interrupted while waiting for the service. Exiting.");
+          exit(EXIT_FAILURE);
         }
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "service not available, waiting again...");
+        RCLCPP_INFO(rclcpp::get_logger("rclcpp"),
+                    "service not available, waiting again...");
       }
   }
 
  private:
-   //Variables
-  std::string Message="Shantanu";
+  // Variables
+  std::string Message = "Shantanu";
   rclcpp::TimerBase::SharedPtr timer_;
   rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
   rclcpp::Client<beginner_tutorials::srv::ModifyString>::SharedPtr client;
@@ -81,7 +88,7 @@ class MinimalPublisher : public rclcpp::Node {
     message.data = "Hello, " +Message + std::to_string(count_++);
     RCLCPP_INFO(this->get_logger(), "808X ROS2: '%s'", message.data.c_str());
     publisher_->publish(message);
-    if(count_%10==0){
+    if (count_%10 == 0) {
       call_service();
     }
   }
@@ -91,12 +98,14 @@ class MinimalPublisher : public rclcpp::Node {
  * 
  * @return int 
  */
-  int call_service(){
-    auto request = std::make_shared<beginner_tutorials::srv::ModifyString::Request>();
+  int call_service() {
+    auto request =
+        std::make_shared<beginner_tutorials::srv::ModifyString::Request>();
     request->a = "Random";
     request->b = "Animal";
-    RCLCPP_INFO (this->get_logger(), "Calling Service to Modify string");
-    auto callbackPtr  = std::bind(&MinimalPublisher::response_callback, this, _1);
+    RCLCPP_INFO(this->get_logger(), "Calling Service to Modify string");
+    auto callbackPtr  =
+        std::bind(&MinimalPublisher::response_callback, this, _1);
     client->async_send_request(request, callbackPtr);
     return 1;
   }
@@ -105,30 +114,27 @@ class MinimalPublisher : public rclcpp::Node {
  * 
  * @param future 
  */
-  void response_callback (rclcpp::Client<beginner_tutorials::srv::ModifyString>::SharedFuture future) {
+  void response_callback(sharedFuture future) {
     // Process the response
-    RCLCPP_INFO (this->get_logger(), "Got String: %s", future.get()->c.c_str());
-    Message=future.get()->c.c_str();
+    RCLCPP_INFO(this->get_logger(), "Got String: %s", future.get()->c.c_str());
+    Message = future.get()->c.c_str();
   }
 /**
  * @brief Callback Function to handle Parameter calls
  * 
  * @param param 
  */
-  void param_callback (const rclcpp::Parameter & param) {
-    RCLCPP_INFO (this->get_logger(),
+  void param_callback(const rclcpp::Parameter & param) {
+    RCLCPP_INFO(this->get_logger(),
                  "cb: Received an update to parameter \"%s\" of type %s: %.2f",
                  param.get_name().c_str(),
                  param.get_type_name().c_str(),
                  param.as_double());
-    
-    auto period = std::chrono::milliseconds (static_cast<int> ((1000 / param.as_double())));
+    auto period =
+      std::chrono::milliseconds(static_cast<int> ((1000 / param.as_double())));
     timer_ = this->create_wall_timer(
     period, std::bind(&MinimalPublisher::timer_callback, this));
   }
-
-
-
 };
 
 /**
