@@ -17,7 +17,12 @@
 #include <vector>
 #include <memory>
 using ModString = beginner_tutorials::srv::ModifyString;
-
+/**
+ * @brief Callback function to process the request
+ * 
+ * @param request 
+ * @param response 
+ */
 void add(const std::shared_ptr<ModString::Request> request,
           std::shared_ptr<ModString::Response> response) {
   std::vector<std::string> words{"Cat", "Dog", "Rat", "Bat", "Bird",

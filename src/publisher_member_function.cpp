@@ -37,10 +37,13 @@ class MinimalPublisher : public rclcpp::Node {
     // Fetching value from the parameter server
     auto param = this->get_parameter("freq");
     auto freq = param.get_parameter_value().get<std::float_t>();
+    RCLCPP_DEBUG(this->get_logger(),
+          "Declared parameter freq and set to 2.0 hz");
 
     // Creating a subscriber for Parameter
     // and setting up call back to change frequency
     m_param_subscriber_ = std::make_shared<rclcpp::ParameterEventHandler>(this);
+    RCLCPP_DEBUG(this->get_logger(), "Parameter event Handler  is Created");
     auto paramCallbackPtr =
             std::bind(&MinimalPublisher::param_callback, this, _1);
     m_paramHandle_ =
@@ -49,6 +52,7 @@ class MinimalPublisher : public rclcpp::Node {
 
   // Creating a Publisher
     publisher_ = this->create_publisher<std_msgs::msg::String>("topic", 10);
+    RCLCPP_DEBUG(this->get_logger(), "Publisher is Created");
     auto period = std::chrono::milliseconds(static_cast<int>((1000 / freq)));
     timer_ = this->create_wall_timer(
     period, std::bind(&MinimalPublisher::timer_callback, this));
@@ -58,13 +62,14 @@ class MinimalPublisher : public rclcpp::Node {
   // Creating a Client
     client =
     this->create_client<beginner_tutorials::srv::ModifyString>("modify_string");
+    RCLCPP_DEBUG(this->get_logger(), "Client is Created");
     while (!client->wait_for_service(1s)) {
         if (!rclcpp::ok()) {
-          RCLCPP_ERROR(rclcpp::get_logger("rclcpp"),
+          RCLCPP_FATAL(rclcpp::get_logger("rclcpp"),
                     "Interrupted while waiting for the service. Exiting.");
           exit(EXIT_FAILURE);
         }
-        RCLCPP_INFO(rclcpp::get_logger("rclcpp"),
+        RCLCPP_WARN(rclcpp::get_logger("rclcpp"),
                     "service not available, waiting again...");
       }
   }
@@ -84,6 +89,8 @@ class MinimalPublisher : public rclcpp::Node {
  * 
  */
   void timer_callback() {
+    // C++ stream style
+    RCLCPP_INFO_STREAM_ONCE(this->get_logger(), "The Node Has been Setup");
     auto message = std_msgs::msg::String();
     message.data = "Hello, " +Message + std::to_string(count_++);
     RCLCPP_INFO(this->get_logger(), "808X ROS2: '%s'", message.data.c_str());
@@ -91,6 +98,9 @@ class MinimalPublisher : public rclcpp::Node {
     if (count_%10 == 0) {
       call_service();
     }
+    auto steady_clock = rclcpp::Clock();
+    RCLCPP_DEBUG_STREAM_THROTTLE(this->get_logger(),
+         steady_clock, 10000, "Node Running in Healthy Way");
   }
 
 /**
@@ -130,10 +140,24 @@ class MinimalPublisher : public rclcpp::Node {
                  param.get_name().c_str(),
                  param.get_type_name().c_str(),
                  param.as_double());
-    auto period =
+    RCLCPP_WARN(this->get_logger(),
+    "You have changed the base frequency this might affect some functionality");
+
+    RCLCPP_FATAL_EXPRESSION(this->get_logger(), param.as_double() == 0.0,
+    "Frequency is beign set to zero and will lead to zero division error");
+    if (param.as_double() == 0.0) {
+      auto period =
+      std::chrono::milliseconds(static_cast<int> (param.as_double()));
+      timer_ = this->create_wall_timer(
+      period, std::bind(&MinimalPublisher::timer_callback, this));
+      RCLCPP_ERROR(this->get_logger(),
+          "The Frequency has been set to zero and no mesages will be pblished");
+    } else {
+      auto period =
       std::chrono::milliseconds(static_cast<int> ((1000 / param.as_double())));
-    timer_ = this->create_wall_timer(
-    period, std::bind(&MinimalPublisher::timer_callback, this));
+      timer_ = this->create_wall_timer(
+      period, std::bind(&MinimalPublisher::timer_callback, this));
+    }
   }
 };
 
