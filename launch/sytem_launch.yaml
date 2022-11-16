@@ -1,0 +1,30 @@
+# example.launch.yaml
+
+launch:
+
+# args that can be set from the command line or a default will be used
+- arg:
+    name: "frequency"
+    default: "2.0"
+
+
+# start a turtlesim_node in the turtlesim1 namespace
+- node:
+    pkg: "beginner_tutorials"
+    exec: "talker"
+    param:
+    -
+     name: "freq"
+     value: "$(var frequency)"
+
+# perform remap so both turtles listen to the same command topic
+- node:
+    pkg: "beginner_tutorials"
+    exec: "listener"
+    
+  
+- node:
+    pkg: "beginner_tutorials"
+    exec: "server"
+    
+    

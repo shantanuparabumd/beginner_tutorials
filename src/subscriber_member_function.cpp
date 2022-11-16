@@ -16,9 +16,17 @@
 #include "std_msgs/msg/string.hpp"
 
 using std::placeholders::_1;
+/**
+ * @brief Class for Minimal subscriber 
+ * 
+ */
 
 class MinimalSubscriber : public rclcpp::Node {
  public:
+ /**
+  * @brief Construct a new Minimal Subscriber object
+  * 
+  */
   MinimalSubscriber()
   : Node("minimal_subscriber") {
     subscription_ = this->create_subscription<std_msgs::msg::String>(
@@ -26,6 +34,11 @@ class MinimalSubscriber : public rclcpp::Node {
   }
 
  private:
+ /**
+  * @brief Callback to process the message fetched from the topic
+  * 
+  * @param msg 
+  */
   void topic_callback(const std_msgs::msg::String & msg) const {
     RCLCPP_INFO(this->get_logger(), "I heard: '%s'", msg.data.c_str());
   }
