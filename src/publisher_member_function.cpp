@@ -146,12 +146,8 @@ class MinimalPublisher : public rclcpp::Node {
     RCLCPP_FATAL_EXPRESSION(this->get_logger(), param.as_double() == 0.0,
     "Frequency is beign set to zero and will lead to zero division error");
     if (param.as_double() == 0.0) {
-      auto period =
-      std::chrono::milliseconds(static_cast<int> (param.as_double()));
-      timer_ = this->create_wall_timer(
-      period, std::bind(&MinimalPublisher::timer_callback, this));
       RCLCPP_ERROR(this->get_logger(),
-          "The Frequency has been set to zero and no mesages will be pblished");
+      "Frequency has not been changed as it would lead to zero division error");
     } else {
       auto period =
       std::chrono::milliseconds(static_cast<int> ((1000 / param.as_double())));
