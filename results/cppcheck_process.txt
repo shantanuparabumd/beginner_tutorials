@@ -1,2 +1,5 @@
+src/modify_string_server.cpp:38:49: style: Variable 'service' is assigned a value that is never used. [unreadVariable]
+  rclcpp::Service<ModString>::SharedPtr service =
+                                                ^
 nofile:0:0: information: Cppcheck cannot find all the include files (use --check-config for details) [missingInclude]
 
