@@ -29,6 +29,7 @@ find_package(tf2 REQUIRED)
 find_package(tf2_ros REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(rosbag2_cpp REQUIRED)
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   "srv/ModifyString.srv"  
@@ -47,13 +48,14 @@ ament_target_dependencies(listener rclcpp std_msgs)
 add_executable(server src/modify_string_server.cpp)
 ament_target_dependencies(server rclcpp std_msgs)
 
-
-
+add_executable(simple_bag_recorder src/simple_bag_recorder.cpp)
+ament_target_dependencies(simple_bag_recorder rclcpp rosbag2_cpp std_msgs)
 
 install(TARGETS
   talker
   listener
   server
+  simple_bag_recorder
   DESTINATION lib/${PROJECT_NAME})
 
 rosidl_target_interfaces(server 
@@ -63,13 +65,22 @@ ${PROJECT_NAME} "rosidl_typesupport_cpp")
 
 ament_export_dependencies(rosidl_default_runtime)
 
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
+
 foreach(Dependency IN ITEMS ${THIS_PACKAGE_INCLUDE_DEPENDS})
   find_package(${Dependency} REQUIRED)
 endforeach()
 
 if(BUILD_TESTING)
+  set(ament_cmake_cppcheck_ADDITIONAL_INCLUDE_DIRS ${rclcpp_INCLUDE_DIRS})
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
+
+  find_package(launch_testing_ament_cmake REQUIRED)
 
   # the following lines skip linters
   set(ament_cmake_cppcheck_FOUND TRUE)

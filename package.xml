@@ -14,6 +14,7 @@
   <depend>std_msgs</depend>
   <depend>tf2</depend>
   <depend>tf2_ros</depend>
+  <depend>rosbag2_cpp</depend>
 
   <!-- <depend>beginner_tutorials</depend> -->
   <build_depend>rosidl_default_generators</build_depend>

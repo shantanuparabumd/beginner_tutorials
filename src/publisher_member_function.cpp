@@ -106,9 +106,8 @@ class MinimalPublisher : public rclcpp::Node {
     if (count_%10 == 0) {
       call_service();
     }
-    //Send Transform
+    // Send Transform
     transform_publish();
-  
     auto steady_clock = rclcpp::Clock();
     RCLCPP_DEBUG_STREAM_THROTTLE(this->get_logger(),
          steady_clock, 10000, "Node Running in Healthy Way");
@@ -166,7 +165,7 @@ class MinimalPublisher : public rclcpp::Node {
       period, std::bind(&MinimalPublisher::timer_callback, this));
     }
   }
-  //TF Publisher
+  // TF Publisher
   void transform_publish(){
     geometry_msgs::msg::TransformStamped t;
 
