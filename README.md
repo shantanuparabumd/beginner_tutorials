@@ -65,3 +65,28 @@ ros2 param set \minimal_publisher freq 2.0
 
 **RQT GRAPH**
 ![RQT GRAPH](results/RQT_GRAPH.png)
+***
+## Week 11
+### TF 
+In One Terminal Run
+```bash
+ros2 run beginner_tutorials talker
+```
+In Second Terminal Run 
+```bash
+ros2 run beginner_tutorials server
+```
+In another terminal run 
+```bash
+ros2 run tf2_ros tf2_echo world dummy
+```
+### TF Results
+[Frames PDF](results/frames_2022-11-30_14.25.31.pdf)   
+### Ros Bag Launch
+```bash
+cd ~/ros2_ws/src/beginner_tutorials/launch
+# Run the bellow command to run along with the bag file
+ros2 launch beginner_tutorials system_bag_launch.py ros_bag:='True'
+# Run the bellow command to run along without the bag file
+ros2 launch beginner_tutorials system_bag_launch.py
+```
