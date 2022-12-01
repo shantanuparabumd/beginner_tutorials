@@ -1,3 +1,8 @@
 Done processing ./src/modify_string_server.cpp
 Done processing ./src/publisher_member_function.cpp
+Done processing ./src/simple_bag_recorder.cpp
 Done processing ./src/subscriber_member_function.cpp
+Done processing ./test/basic_test.cpp
+Done processing ./test/main.cpp
+Done processing ./test/ros_test.cpp
+Total errors found: 18

@@ -1,5 +1,11 @@
 src/modify_string_server.cpp:38:49: style: Variable 'service' is assigned a value that is never used. [unreadVariable]
   rclcpp::Service<ModString>::SharedPtr service =
                                                 ^
+src/simple_bag_recorder.cpp:14:5: performance: Variable 'writer_' is assigned in constructor body. Consider performing initialization in initialization list. [useInitializationList]
+    writer_ = std::make_unique<rosbag2_cpp::Writer>();
+    ^
+test/basic_test.cpp:30:1: error: syntax error [syntaxError]
+TEST_F(TaskPlanningFixture, TrueIsTrueTest) {
+^
 nofile:0:0: information: Cppcheck cannot find all the include files (use --check-config for details) [missingInclude]
 
