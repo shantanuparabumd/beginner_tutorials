@@ -21,6 +21,8 @@
 #include "rclcpp/rclcpp.hpp"
 
 #include "beginner_tutorials/srv/modify_string.hpp"
+using beginner_tutorials::srv::ModifyString;
+using rclcpp::Node;
 
 #ifdef RMW_IMPLEMENTATION
 # define CLASSNAME_(NAME, SUFFIX) NAME ## __ ## SUFFIX
@@ -31,25 +33,26 @@
 
 using namespace std::chrono_literals;
 
-class CLASSNAME (test_services_client, RMW_IMPLEMENTATION) : public ::testing::Test
-{
+class CLASSNAME(test_services_client,
+ RMW_IMPLEMENTATION):public::testing::Test {
 public:
-  static void SetUpTestCase()
-  {
+  static void SetUpTestCase() {
     rclcpp::init(0, nullptr);
   }
 
-  static void TearDownTestCase()
-  {
+  static void TearDownTestCase() {
     rclcpp::shutdown();
   }
 };
-
+/**
+ * @brief Construct a new test f object
+ * 
+ */
 TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
-  auto node = rclcpp::Node::make_shared("test_services_client_no_reqid");
+  auto node = Node::make_shared("test_services_client_no_reqid");
 
-  auto client = node->create_client<beginner_tutorials::srv::ModifyString>("add_two_ints_noreqid");
-  auto request = std::make_shared<beginner_tutorials::srv::ModifyString::Request>();
+  auto client = node->create_client<ModifyString>("add_two_ints_noreqid");
+  auto request = std::make_shared<ModifyString::Request>();
   request->a = "Shantanu";
   request->b = "Parab";
 
@@ -59,17 +62,21 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_noreqid) {
 
   auto result = client->async_send_request(request);
 
-  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);
+  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ("ShantanuParab", result.get()->c);
 }
-
+/**
+ * @brief Construct a new test f object
+ * 
+ */
 TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
-  auto node = rclcpp::Node::make_shared("test_services_client_add_reqid");
+  auto node = Node::make_shared("test_services_client_add_reqid");
 
-  auto client = node->create_client<beginner_tutorials::srv::ModifyString>("add_two_ints_reqid");
-  auto request = std::make_shared<beginner_tutorials::srv::ModifyString::Request>();
+  auto client = node->create_client<ModifyString>("add_two_ints_reqid");
+  auto request = std::make_shared<ModifyString::Request>();
   request->a = "Shantanu";
   request->b = "Parab";
 
@@ -79,18 +86,23 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_reqid) {
 
   auto result = client->async_send_request(request);
 
-  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);
+  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 
   EXPECT_EQ("ShantanuParab", result.get()->c);
 }
+/**
+ * @brief Construct a new test f object
+ * 
+ */
+TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION)
+, test_return_request) {
+  auto node = Node::make_shared("test_services_client_return_request");
 
-TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request) {
-  auto node = rclcpp::Node::make_shared("test_services_client_return_request");
-
-  auto client = node->create_client<beginner_tutorials::srv::ModifyString>(
+  auto client = node->create_client<ModifyString>(
     "add_two_ints_reqid_return_request");
-  auto request = std::make_shared<beginner_tutorials::srv::ModifyString::Request>();
+  auto request = std::make_shared<ModifyString::Request>();
   request->a = "Shantanu";
   request->b = "Parab";
 
@@ -100,22 +112,27 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_return_request)
 
   auto result = client->async_send_request(
     request,
-    [](rclcpp::Client<beginner_tutorials::srv::ModifyString>::SharedFutureWithRequest future) {
+    [](rclcpp::Client<ModifyString>::SharedFutureWithRequest future) {
       EXPECT_EQ("Shantanu", future.get().first->a);
       EXPECT_EQ("Parab", future.get().first->b);
       EXPECT_EQ("ShantanuParab", future.get().second->c);
     });
 
-  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);
+  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 }
+/**
+ * @brief Construct a new test f object
+ * 
+ */
+TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION),
+ test_add_two_ints_defered_cb) {
+  auto node = Node::make_shared("test_services_client_add_two_ints_defered_cb");
 
-TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_defered_cb) {
-  auto node = rclcpp::Node::make_shared("test_services_client_add_two_ints_defered_cb");
-
-  auto client = node->create_client<beginner_tutorials::srv::ModifyString>(
+  auto client = node->create_client<ModifyString>(
     "add_two_ints_defered_cb");
-  auto request = std::make_shared<beginner_tutorials::srv::ModifyString::Request>();
+  auto request = std::make_shared<ModifyString::Request>();
   request->a = "Shantanu";
   request->b = "Parab";
 
@@ -125,22 +142,28 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_de
 
   auto result = client->async_send_request(
     request,
-    [](rclcpp::Client<beginner_tutorials::srv::ModifyString>::SharedFutureWithRequest future) {
+    [](rclcpp::Client<ModifyString>::SharedFutureWithRequest future) {
       EXPECT_EQ("Shantanu", future.get().first->a);
       EXPECT_EQ("Parab", future.get().first->b);
       EXPECT_EQ("ShantanuParab", future.get().second->c);
     });
 
-  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);
+  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 }
+/**
+ * @brief Construct a new test f object
+ * 
+ */
+TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION),
+ test_add_two_ints_defcb_with_handle) {
+  auto node = Node::make_shared(
+    "test_services_client_add_two_ints_defered_cb_with_handle");
 
-TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_defcb_with_handle) {
-  auto node = rclcpp::Node::make_shared("test_services_client_add_two_ints_defered_cb_with_handle");
-
-  auto client = node->create_client<beginner_tutorials::srv::ModifyString>(
+  auto client = node->create_client<ModifyString>(
     "add_two_ints_defered_cb_with_handle");
-  auto request = std::make_shared<beginner_tutorials::srv::ModifyString::Request>();
+  auto request = std::make_shared<ModifyString::Request>();
   request->a = "Shantanu";
   request->b = "Parab";
 
@@ -150,12 +173,13 @@ TEST_F(CLASSNAME(test_services_client, RMW_IMPLEMENTATION), test_add_two_ints_de
 
   auto result = client->async_send_request(
     request,
-    [](rclcpp::Client<beginner_tutorials::srv::ModifyString>::SharedFutureWithRequest future) {
+    [](rclcpp::Client<ModifyString>::SharedFutureWithRequest future) {
       EXPECT_EQ("Shantanu", future.get().first->a);
       EXPECT_EQ("Parab", future.get().first->b);
       EXPECT_EQ("ShantanuParab", future.get().second->c);
     });
 
-  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);  // Wait for the result.
+  auto ret = rclcpp::spin_until_future_complete(node, result, 5s);
+  // Wait for the result.
   ASSERT_EQ(ret, rclcpp::FutureReturnCode::SUCCESS);
 }

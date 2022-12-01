@@ -83,10 +83,32 @@ ros2 run tf2_ros tf2_echo world dummy
 ### TF Results
 [Frames PDF](results/frames_2022-11-30_14.25.31.pdf)   
 ### Ros Bag Launch
+Note: Make sure you delete the existing my_bag folder
 ```bash
 cd ~/ros2_ws/src/beginner_tutorials/launch
 # Run the bellow command to run along with the bag file
 ros2 launch beginner_tutorials system_bag_launch.py ros_bag:='True'
 # Run the bellow command to run along without the bag file
 ros2 launch beginner_tutorials system_bag_launch.py
+```
+**Check the rosbag output**
+```bash
+#Run in One terminal
+ros2 run beginner_tutorials listener
+#Run in Another terminal
+ros2 bag play my_bag
+```
+### Testing  
+**Build Testing**  
+```bash
+colcon test --packages-select beginner_tutorials
+```
+**Verbose Output**  
+```bash
+colcon test --event-handlers console_direct+ --packages-select beginner_tutorials
+```
+**Return Status**  
+```bash
+colcon test-result --test-result-base build/beginner_tutorials
+echo $?
 ```

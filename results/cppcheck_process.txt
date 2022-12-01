@@ -1,11 +1,14 @@
 src/modify_string_server.cpp:38:49: style: Variable 'service' is assigned a value that is never used. [unreadVariable]
   rclcpp::Service<ModString>::SharedPtr service =
                                                 ^
-src/simple_bag_recorder.cpp:14:5: performance: Variable 'writer_' is assigned in constructor body. Consider performing initialization in initialization list. [useInitializationList]
+src/simple_bag_recorder.cpp:21:5: performance: Variable 'writer_' is assigned in constructor body. Consider performing initialization in initialization list. [useInitializationList]
     writer_ = std::make_unique<rosbag2_cpp::Writer>();
     ^
-test/basic_test.cpp:30:1: error: syntax error [syntaxError]
-TEST_F(TaskPlanningFixture, TrueIsTrueTest) {
+test/test_services_client.cpp:39:0: style: The function 'SetUpTestCase' is never used. [unusedFunction]
+
+^
+test/test_services_client.cpp:43:0: style: The function 'TearDownTestCase' is never used. [unusedFunction]
+
 ^
 nofile:0:0: information: Cppcheck cannot find all the include files (use --check-config for details) [missingInclude]
 
