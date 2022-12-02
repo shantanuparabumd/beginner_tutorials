@@ -85,7 +85,7 @@ ros2 run tf2_ros tf2_echo world dummy
 ### Ros Bag Launch
 Note: Make sure you delete the existing my_bag folder
 ```bash
-cd ~/ros2_ws/src/beginner_tutorials/launch
+cd ~/ros2_ws/src/beginner_tutorials/bag_recordings
 # Run the bellow command to run along with the bag file
 ros2 launch beginner_tutorials system_bag_launch.py ros_bag:='True'
 # Run the bellow command to run along without the bag file
@@ -96,8 +96,12 @@ ros2 launch beginner_tutorials system_bag_launch.py
 #Run in One terminal
 ros2 run beginner_tutorials listener
 #Run in Another terminal
+cd ~/ros2_ws/src/beginner_tutorials/bag_recordings
 ros2 bag play my_bag
 ```
+Note: The rosbag is created in the directory where the launch file is executed from.  
+The rosbag play command should be played in the same directory.
+
 ### Testing  
 **Build Testing**  
 ```bash
