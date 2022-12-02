@@ -36,7 +36,7 @@ def generate_launch_description():
             ])
         ),
         cmd=[[
-            ' ros2 run beginner_tutorials simple_bag_recorder '
+            'ros2 run beginner_tutorials simple_bag_recorder'
         ]],
         shell=True
     )
